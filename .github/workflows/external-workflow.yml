@@ -13,6 +13,9 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps: 
+      - name: Print Build External Reusable Workflow Status
+        run: echo "Running build on external reusable workflow"
+        
       - name: checkout repo
         uses: actions/checkout@v3
       # Modified to use the node-version from the workflow inputs
@@ -28,6 +31,9 @@ jobs:
     needs: build
     runs-on: ubuntu-latest
     steps: 
+      - name: Print Test External Reusable Workflow Status
+        run: echo "Running tests on external reusable workflow"
+        
       - name: checkout repo
         uses: actions/checkout@v3
       # Modified to use the node-version from the workflow inputs
@@ -40,7 +46,8 @@ jobs:
       - run: npm run test
 
   done:
+    needs: [build, test]
     runs-on: ubuntu-latest
     steps:
-      - name: Print Hello Message
-        run: echo "Hello, world!"
+      - name: Print Completed Message
+        run: echo "Finished running external reusable workflow"
