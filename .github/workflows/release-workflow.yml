@@ -49,17 +49,19 @@ jobs:
         run: |
           LAST_COMMIT=$(git log -1 --pretty=%B)
           if [[ $LAST_COMMIT == *"BREAKING CHANGE"* ]]; then
-            echo "INCREMENT_TAG=major" >> $GITHUB_ENV
+            echo "INCREMENT_TYPE=major" >> $GITHUB_ENV
           elif [[ $LAST_COMMIT == *"feat"* ]]; then
-            echo "INCREMENT_TAG=minor" >> $GITHUB_ENV
+            echo "INCREMENT_TYPE=minor" >> $GITHUB_ENV
           el [[ $LAST_COMMIT == *"fix"* ]];
-            echo "INCREMENT_TAG=patch" >> $GITHUB_ENV
+            echo "INCREMENT_TYPE=patch" >> $GITHUB_ENV
           fi
   
         # node -e 'const semver = require("semver"); const tag = process.env.TAG; const incrementType = process.env.INCREMENT_TYPE; console.log(semver.inc(tag, incrementType));'
       - name: Increment tag
         id: increment_tag
         run: |
+          echo $GITHUB_ENV
+          echo $INCREMENT_TYPE
           increment_type=$(cat $GITHUB_ENV)
           if [[ "${increment_type}" != "none" ]]; then
             incremented_tag=$(python -c "import semver; print(semver.bump_${{ steps.determine_increment_type.outputs.INCREMENT_TYPE }}('${{ steps.get_tag.outputs.LATEST_TAG }}'))")
