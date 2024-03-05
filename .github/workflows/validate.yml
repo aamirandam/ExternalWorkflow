@@ -1,0 +1,14 @@
+name: Simple Workflow
+
+on:
+  push:
+    branches:
+      - '*' # Runs on push events to any branch
+
+jobs:
+  print_message:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Print Message
+      run: echo "After this workflow the release should run"
