@@ -18,7 +18,7 @@ jobs:
           python-version: '3.x'  # Use the latest Python 3.x version
 
       - name: Install semver library
-        run: pip install semver
+        run: pip3 install semver
         
       - name: Checkout code
         uses: actions/checkout@v2
