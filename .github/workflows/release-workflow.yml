@@ -53,7 +53,7 @@ jobs:
         run: |
           increment_type=$(cat $GITHUB_ENV)
           if [[ "${increment_type}" != "none" ]]; then
-            incremented_tag=$(python -c "import semver; print(semver.bump_${increment_type}('${LATEST_TAG}'))")
+            incremented_tag=$(python -c "import semver; print(semver.bump_${{ steps.determine_increment_type.outputs.INCREMENT_TYPE }}('${{ steps.get_tag.outputs.LATEST_TAG }}'))")
             echo "INCREMENTED_TAG=${incremented_tag}" >> $GITHUB_ENV
           fi
   
