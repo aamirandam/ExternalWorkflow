@@ -5,6 +5,9 @@ on:
     workflows: ["validate.yml"]
     types:
       - completed
+  push:
+    branches:
+      - main # Change this to your branch name
 
 jobs:
   release-branch:
