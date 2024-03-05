@@ -26,13 +26,8 @@ jobs:
           git fetch --tags
           latest_tag=$(git describe --tags $(git rev-list --tags --max-count=1))
           echo "LATEST_TAG=${latest_tag}" >> $GITHUB_ENV
-
-      - name: Use latest tag
-        run: echo "Latest tag is $LATEST_TAG"
-        
-      - name: Checkout code
-        uses: actions/checkout@v2
-        
+          echo "Latest tag is $LATEST_TAG"
+                
       - name: Determine version increment type
         id: determine_increment_type
         run: |
