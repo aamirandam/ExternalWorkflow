@@ -39,9 +39,9 @@ jobs:
           LAST_COMMIT=$(git log -1 --pretty=%B)
           if [[ $LAST_COMMIT == *"BREAKING CHANGE"* ]]; then
             echo "major"
-          elif [[ $LAST_COMMIT == *"feat:"* ]]; then
+          elif [[ $LAST_COMMIT == *"feat"* ]]; then
             echo "minor"
-          elif [[ $LAST_COMMIT == *"fix:"* ]]; then
+          elif [[ $LAST_COMMIT == *"fix"* ]]; then
             echo "patch"
           else
             echo "none"
