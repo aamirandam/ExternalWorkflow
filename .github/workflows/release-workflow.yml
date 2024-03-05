@@ -1,0 +1,61 @@
+name: Release Workflow
+
+on:
+  workflow_run:
+    workflows: ["validate.yml"]
+    types:
+      - completed
+  push:
+    branches:
+      - main # Change this to your branch name
+
+jobs:
+  release-branch:
+    if: github.event_name == 'workflow_run' && github.event.workflow_run.event == 'completed' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Get latest tag
+      id: get_tag
+      run: echo "::set-output name=tag::$(git describe --abbrev=0 --tags)"
+
+    - name: Determine version increment type
+      id: determine_increment_type
+      run: |
+        LAST_COMMIT=$(git log -1 --pretty=%B)
+        if [[ $LAST_COMMIT == *"BREAKING CHANGE"* ]]; then
+          echo "::set-output name=increment_type::major"
+        elif [[ $LAST_COMMIT == *"feat:"* ]]; then
+          echo "::set-output name=increment_type::minor"
+        elif [[ $LAST_COMMIT == *"fix:"* ]]; then
+          echo "::set-output name=increment_type::patch"
+        else
+          echo "::set-output name=increment_type::none"
+        fi
+
+    - name: Increment tag
+      id: increment_tag
+      run: |
+        if [[ "${{ steps.determine_increment_type.outputs.increment_type }}" != "none" ]]; then
+          node -e 'const semver = require("semver"); const tag = process.env.TAG; const incrementType = process.env.INCREMENT_TYPE; console.log(semver.inc(tag, incrementType));'
+        else
+          echo ${{ github.ref }}
+        fi
+      env:
+        TAG: ${{ github.ref }}
+        INCREMENT_TYPE: ${{ steps.determine_increment_type.outputs.increment_type }}
+
+    - name: Create Release
+      uses: actions/create-release@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        tag_name: ${{ steps.increment_tag.outputs.incremented_tag }}
+        release_name: Release ${{ steps.increment_tag.outputs.incremented_tag }}
+        body: |
+          Release notes go here
+        draft: false
+        prerelease: false
