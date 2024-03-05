@@ -20,13 +20,13 @@ jobs:
       - name: Install semver library
         run: pip3 install semver
         
-      - name: Checkout code
-        uses: actions/checkout@v2
-
   release-latest-tag:
     runs-on: ubuntu-latest
     needs: release-dependencies
     steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+        
       - name: Get latest tag
         id: get_tag
         run: |
@@ -49,10 +49,8 @@ jobs:
             echo "INCREMENT_TAG=major" >> $GITHUB_ENV
           elif [[ $LAST_COMMIT == *"feat"* ]]; then
             echo "INCREMENT_TAG=minor" >> $GITHUB_ENV
-          elif [[ $LAST_COMMIT == *"fix"* ]]; then
+          el [[ $LAST_COMMIT == *"fix"* ]]; then
             echo "INCREMENT_TAG=patch" >> $GITHUB_ENV
-          else
-            echo "none"
           fi
   
         # node -e 'const semver = require("semver"); const tag = process.env.TAG; const incrementType = process.env.INCREMENT_TYPE; console.log(semver.inc(tag, incrementType));'
