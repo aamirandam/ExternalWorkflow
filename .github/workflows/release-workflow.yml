@@ -38,35 +38,32 @@ jobs:
         run: |
           LAST_COMMIT=$(git log -1 --pretty=%B)
           if [[ $LAST_COMMIT == *"BREAKING CHANGE"* ]]; then
-            echo "::set-output name=increment_type::major"
+            echo "major"
           elif [[ $LAST_COMMIT == *"feat:"* ]]; then
-            echo "::set-output name=increment_type::minor"
+            echo "minor"
           elif [[ $LAST_COMMIT == *"fix:"* ]]; then
-            echo "::set-output name=increment_type::patch"
+            echo "patch"
           else
-            echo "::set-output name=increment_type::none"
-          fi
+            echo "none"
+          fi >> $GITHUB_ENV
   
         # node -e 'const semver = require("semver"); const tag = process.env.TAG; const incrementType = process.env.INCREMENT_TYPE; console.log(semver.inc(tag, incrementType));'
       - name: Increment tag
         id: increment_tag
         run: |
-          if [[ "${{ steps.determine_increment_type.outputs.increment_type }}" != "none" ]]; then
-            python -c "import semver; print(semver.bump_${{ steps.determine_increment_type.outputs.increment_type }}('1.0.0'))"
-          else
-            echo ${{ github.ref }}
+          increment_type=$(cat $GITHUB_ENV)
+          if [[ "${increment_type}" != "none" ]]; then
+            incremented_tag=$(python -c "import semver; print(semver.bump_${increment_type}('${LATEST_TAG}'))")
+            echo "INCREMENTED_TAG=${incremented_tag}" >> $GITHUB_ENV
           fi
-        env:
-          TAG: ${{ github.ref }}
-          INCREMENT_TYPE: ${{ steps.determine_increment_type.outputs.increment_type }}
   
       - name: Create Release
         uses: actions/create-release@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tag_name: ${{ steps.increment_tag.outputs.incremented_tag }}
-          release_name: Release ${{ steps.increment_tag.outputs.incremented_tag }}
+          tag_name: ${{ env.INCREMENTED_TAG }}
+          release_name: Release ${{ env.INCREMENTED_TAG }}
           body: |
             Release notes go here
           draft: false
