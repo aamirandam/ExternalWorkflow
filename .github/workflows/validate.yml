@@ -3,7 +3,7 @@ name: Simple Workflow
 on:
   push:
     branches:
-      - '*' # Runs on push events to any branch
+      - '*' # Runs on push events to any branch lalala
 
 jobs:
   print_message:
