@@ -12,13 +12,13 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Set up Python
-        uses: actions/setup-python@v2
+      - name: Set up Node.js
+        uses: actions/setup-node@v2
         with:
-          python-version: '3.x'  # Use the latest Python 3.x version
+          python-version: '16'  
 
       - name: Install semver library
-        run: pip3 install semver
+        run: npm install semver
        
       - name: Checkout code
         uses: actions/checkout@v2
@@ -55,7 +55,7 @@ jobs:
           echo ${{ env.INCREMENT_TYPE }}
           increment_type=$(cat $GITHUB_ENV)
           if [[ "${increment_type}" != "none" ]]; then
-            incremented_tag=$(python -c "import semver; print(semver.bump_${{ steps.determine_increment_type.outputs.INCREMENT_TYPE }}('${{ steps.get_tag.outputs.LATEST_TAG }}'))")
+            incremented_tag=$(node -e "const semver = require('semver'); const tag = '${LATEST_TAG}'; const incrementType = '${increment_type}'; console.log(semver.inc(tag, incrementType));")
             echo "INCREMENTED_TAG=${incremented_tag}" >> $GITHUB_ENV
           fi
 
