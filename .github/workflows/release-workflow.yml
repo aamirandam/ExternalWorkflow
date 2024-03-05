@@ -45,7 +45,7 @@ jobs:
             echo "patch"
           else
             echo "none"
-          fi >> $GITHUB_ENV
+          fi
   
         # node -e 'const semver = require("semver"); const tag = process.env.TAG; const incrementType = process.env.INCREMENT_TYPE; console.log(semver.inc(tag, incrementType));'
       - name: Increment tag
