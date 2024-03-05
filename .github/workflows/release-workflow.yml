@@ -60,7 +60,6 @@ jobs:
       - name: Increment tag
         id: increment_tag
         run: |
-          echo ${{ $GITHUB_ENV }}
           echo ${{ env.INCREMENT_TYPE }}
           increment_type=$(cat $GITHUB_ENV)
           if [[ "${increment_type}" != "none" ]]; then
