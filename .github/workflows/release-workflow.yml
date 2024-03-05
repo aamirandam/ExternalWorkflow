@@ -48,19 +48,15 @@ jobs:
         # node -e 'const semver = require("semver"); const tag = process.env.TAG; const incrementType = process.env.INCREMENT_TYPE; console.log(semver.inc(tag, incrementType));'
       - name: Increment tag
         id: increment_tag
-        run: |
-          echo ${{ env.INCREMENT_TYPE }}
+        run: |-
           increment_type=$(cat $GITHUB_ENV)
           if [[ "${increment_type}" != "none" ]]; then
             major, minor, patch = map(int, LATEST_TAG[1:].split('.'))
             if increment_type == "major":
-                major += 1
-                minor = 0
-                patch = 0
+                major += 1, minor = 0, patch = 0
             elif increment_type == "minor":
-                minor += 1
-                patch = 0
-            else increment_type == "patch":
+                minor += 1, patch = 0
+            elif increment_type == "patch":
                 patch += 1            
             INCREMENTED_TAG = f"v{major}.{minor}.{patch}"
             echo "INCREMENTED_TAG=${INCREMENTED_TAG}" >> $GITHUB_ENV
