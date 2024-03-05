@@ -12,27 +12,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Wait for Other Workflows
-        id: wait_for_workflows
-        uses: actions/github-script@v5
-        with:
-          script: |
-            const { data: workflows } = await github.actions.listRepoWorkflows({ owner: context.repo.owner, repo: context.repo.repo });
-            const statuses = await Promise.all(workflows.workflows.map(async (workflow) => {
-              const runs = await github.actions.listWorkflowRuns({
-                owner: context.repo.owner,
-                repo: context.repo.repo,
-                workflow_id: workflow.id,
-                status: 'completed'
-              });
-              return runs.workflow_runs.every(run => run.conclusion === 'success' || run.conclusion === 'skipped');
-            }));
-            return statuses.every(status => status === true);
-            
-      - name: Exit if Condition Not Met
-        if: steps.all_workflows_completed.outputs.result != 'true'
-        run: exit 1
-          
+               
       - name: Checkout code
         uses: actions/checkout@v2
   
