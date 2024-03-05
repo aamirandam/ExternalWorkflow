@@ -25,7 +25,13 @@ jobs:
   
       - name: Get latest tag
         id: get_tag
-        run: echo "::set-output name=tag::$(git describe --abbrev=0 --tags)"
+        run: |
+          git fetch --tags
+          latest_tag=$(git describe --tags $(git rev-list --tags --max-count=1))
+          echo "LATEST_TAG=${latest_tag}" >> $GITHUB_ENV
+
+      - name: Use latest tag
+        run: echo "Latest tag is $LATEST_TAG"
   
       - name: Determine version increment type
         id: determine_increment_type
