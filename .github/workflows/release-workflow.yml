@@ -76,4 +76,4 @@ jobs:
           body: |
             Release notes go here
           draft: false
-        prerelease: false
+          prerelease: false
