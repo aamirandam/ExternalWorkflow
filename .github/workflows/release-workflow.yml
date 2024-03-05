@@ -12,10 +12,10 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Set up Node.js
-        uses: actions/setup-node@v2
+      - name: Set up Python
+        uses: actions/setup-python@v2
         with:
-          python-version: '16'  
+          python-version: '3.x'  
 
       - name: Install semver library
         run: npm install semver
@@ -40,7 +40,7 @@ jobs:
         id: determine_increment_type
         run: |
           LAST_COMMIT=$(git log -1 --pretty=%B)
-          if [[ $LAST_COMMIT == *"BREAKING CHANGE"* ]]; then
+          if [[ $LAST_COMMIT == *"breaking-change"* ]]; then
             echo "INCREMENT_TYPE=major" >> $GITHUB_ENV
           elif [[ $LAST_COMMIT == *"feat"* ]]; then
             echo "INCREMENT_TYPE=minor" >> $GITHUB_ENV
@@ -55,8 +55,18 @@ jobs:
           echo ${{ env.INCREMENT_TYPE }}
           increment_type=$(cat $GITHUB_ENV)
           if [[ "${increment_type}" != "none" ]]; then
-            incremented_tag=$(node -e "const semver = require('semver'); const tag = '${LATEST_TAG}'; const incrementType = '${increment_type}'; console.log(semver.inc(tag, incrementType));")
-            echo "INCREMENTED_TAG=${incremented_tag}" >> $GITHUB_ENV
+            major, minor, patch = map(int, LATEST_TAG[1:].split('.'))
+            if increment_type == "major":
+                major += 1
+                minor = 0
+                patch = 0
+            elif increment_type == "minor":
+                minor += 1
+                patch = 0
+            else increment_type == "patch":
+                patch += 1            
+            INCREMENTED_TAG = f"v{major}.{minor}.{patch}"
+            echo "INCREMENTED_TAG=${INCREMENTED_TAG}" >> $GITHUB_ENV
           fi
 
       - name: Create Release
