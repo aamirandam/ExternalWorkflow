@@ -52,7 +52,7 @@ jobs:
             echo "INCREMENT_TAG=major" >> $GITHUB_ENV
           elif [[ $LAST_COMMIT == *"feat"* ]]; then
             echo "INCREMENT_TAG=minor" >> $GITHUB_ENV
-          el [[ $LAST_COMMIT == *"fix"* ]]; then
+          el [[ $LAST_COMMIT == *"fix"* ]];
             echo "INCREMENT_TAG=patch" >> $GITHUB_ENV
           fi
   
