@@ -50,7 +50,7 @@ jobs:
         id: increment_tag
         run: |-
           echo ${{ env.GITHUB_ENV }}
-          increment_type=$(cat $GITHUB_ENV)
+          increment_type='minor' #$(cat $GITHUB_ENV)
           if [[ "${increment_type}" != "none" ]]; then
             major, minor, patch = map(int, LATEST_TAG[1:].split('.'))
             if increment_type == "major":
