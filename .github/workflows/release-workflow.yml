@@ -12,13 +12,13 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Use Node.js 18.x
-        uses: actions/setup-node@v2
+      - name: Set up Python
+        uses: actions/setup-python@v2
         with:
-          node-version: 18.x
+          python-version: '3.x'  # Use the latest Python 3.x version
 
-      - name: Install Dependencies
-        run: npm install semver
+      - name: Install semver library
+        run: pip install semver
         
       - name: Checkout code
         uses: actions/checkout@v2
@@ -41,11 +41,12 @@ jobs:
             echo "::set-output name=increment_type::none"
           fi
   
+        # node -e 'const semver = require("semver"); const tag = process.env.TAG; const incrementType = process.env.INCREMENT_TYPE; console.log(semver.inc(tag, incrementType));'
       - name: Increment tag
         id: increment_tag
         run: |
           if [[ "${{ steps.determine_increment_type.outputs.increment_type }}" != "none" ]]; then
-            node -e 'const semver = require("semver"); const tag = process.env.TAG; const incrementType = process.env.INCREMENT_TYPE; console.log(semver.inc(tag, incrementType));'
+            python -c "import semver; print(semver.bump_${{ steps.determine_increment_type.outputs.increment_type }}('1.0.0'))"
           else
             echo ${{ github.ref }}
           fi
