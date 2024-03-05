@@ -61,6 +61,7 @@ jobs:
         uses: actions/create-release@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          INCREMENTED_TAG: ${{ env.INCREMENTED_TAG }}
         with:
           tag_name: ${{ env.INCREMENTED_TAG }}
           release_name: Release ${{ env.INCREMENTED_TAG }}
