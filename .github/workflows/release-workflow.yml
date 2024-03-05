@@ -8,12 +8,12 @@ on:
 
 jobs:
   release-branch:
-    if: github.event_name == 'workflow_run' && github.event.workflow_run.event == 'completed' && github.ref == 'refs/heads/main'
+    if: github.event.workflow_run.event == 'completed' && github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
 
     steps:
     - name: Wait for Other Workflows
-      id: all_workflows_completed
+      id: wait_for_workflows
       uses: actions/github-script@v5
       with:
         script: |
